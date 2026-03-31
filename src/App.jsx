@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Link, useLocation } from 'react-router-dom';
-import { Moon, Sun, Menu, X } from 'lucide-react';
+import { BrowserRouter, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
+import { Menu, X, MessageCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import LandingHero from './pages/LandingHero';
 import ProfileBuilder from './pages/ProfileBuilder';
 import JobListings from './pages/JobListings';
 import JobDetail from './pages/JobDetail';
 import EmployerDashboard from './pages/EmployerDashboard';
+import ChatbotPage from './pages/ChatbotPage';
 import './App.css';
 
 // Base accessible button component used throughout
@@ -57,9 +58,10 @@ export const AccessibleButton = ({ children, onClick, className = '', variant = 
   );
 };
 
-const Header = ({ isHighContrast, toggleHighContrast }) => {
+const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -108,13 +110,13 @@ const Header = ({ isHighContrast, toggleHighContrast }) => {
       </nav>
 
       <div className="header-actions" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+        {/* Chat with Asha button - navigates to full page */}
         <button
-          onClick={toggleHighContrast}
-          aria-label="Toggle high contrast mode"
-          aria-pressed={isHighContrast}
+          onClick={() => navigate('/chat')}
+          aria-label="Chat with Asha - AI Assistant"
           style={{
-            background: 'var(--card-bg)',
-            border: '1px solid var(--border)',
+            background: 'var(--primary-gradient)',
+            border: 'none',
             cursor: 'pointer',
             padding: '8px',
             borderRadius: '50%',
@@ -124,12 +126,12 @@ const Header = ({ isHighContrast, toggleHighContrast }) => {
             minHeight: '44px',
             minWidth: '44px',
             transition: 'all 0.2s',
-            boxShadow: 'var(--card-shadow)'
+            boxShadow: '0 4px 10px var(--accent-purple-glow)'
           }}
           onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.1)'}
           onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
         >
-          {isHighContrast ? <Sun size={20} color="#FFFF00" /> : <Moon size={20} color="var(--accent-purple)" />}
+          <MessageCircle size={20} color="white" />
         </button>
         <AccessibleButton variant="ghost" className="desktop-only">Sign In</AccessibleButton>
         <AccessibleButton className="desktop-only">Post a Job</AccessibleButton>
@@ -258,34 +260,24 @@ const AnimatedRoutes = () => {
             <EmployerDashboard />
           </motion.div>
         } />
+        <Route path="/chat" element={
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.3 }}>
+            <ChatbotPage />
+          </motion.div>
+        } />
       </Routes>
     </AnimatePresence>
   );
 };
 
 function App() {
-  const [isHighContrast, setIsHighContrast] = useState(() => {
-    return localStorage.getItem('highContrast') === 'true';
-  });
-
-  useEffect(() => {
-    if (isHighContrast) {
-      document.body.classList.add('high-contrast');
-    } else {
-      document.body.classList.remove('high-contrast');
-    }
-    localStorage.setItem('highContrast', isHighContrast);
-  }, [isHighContrast]);
-
-  const toggleHighContrast = () => setIsHighContrast(!isHighContrast);
-
   return (
     <BrowserRouter>
       {/* 1. Skip to main content link must be first in body/app */}
       <a href="#main-content" className="skip-link">Skip to main content</a>
 
       <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-        <Header isHighContrast={isHighContrast} toggleHighContrast={toggleHighContrast} />
+        <Header />
 
         <main id="main-content" style={{ flex: 1 }}>
           <AnimatedRoutes />

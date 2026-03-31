@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Link, useLocation } from 'react-router-dom';
-import { Moon, Sun, Menu, X } from 'lucide-react';
+import { Moon, Sun, Menu, X, MessageCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import LandingHero from './src/pages/LandingHero';
 import ProfileBuilder from './src/pages/ProfileBuilder';
 import JobListings from './src/pages/JobListings';
 import JobDetail from './src/pages/JobDetail';
 import EmployerDashboard from './src/pages/EmployerDashboard';
+import AccessibleChatbot from './src/AccessibleChatbot';
 import './App.css';
 
 // Base accessible button component used throughout
@@ -57,7 +58,7 @@ export const AccessibleButton = ({ children, onClick, className = '', variant = 
   );
 };
 
-const Header = ({ isHighContrast, toggleHighContrast }) => {
+const Header = ({ isHighContrast, toggleHighContrast, onOpenChat }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -108,13 +109,13 @@ const Header = ({ isHighContrast, toggleHighContrast }) => {
       </nav>
 
       <div className="header-actions" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+        {/* Chat with Asha button - Replaces theme toggle */}
         <button
-          onClick={toggleHighContrast}
-          aria-label="Toggle high contrast mode"
-          aria-pressed={isHighContrast}
+          onClick={onOpenChat}
+          aria-label="Chat with Asha - AI Assistant"
           style={{
-            background: 'var(--card-bg)',
-            border: '1px solid var(--border)',
+            background: 'var(--primary-gradient)',
+            border: 'none',
             cursor: 'pointer',
             padding: '8px',
             borderRadius: '50%',
@@ -124,13 +125,14 @@ const Header = ({ isHighContrast, toggleHighContrast }) => {
             minHeight: '44px',
             minWidth: '44px',
             transition: 'all 0.2s',
-            boxShadow: 'var(--card-shadow)'
+            boxShadow: '0 4px 10px var(--accent-purple-glow)'
           }}
           onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.1)'}
           onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
         >
-          {isHighContrast ? <Sun size={20} color="#FFFF00" /> : <Moon size={20} color="var(--accent-purple)" />}
+          <MessageCircle size={20} color="white" />
         </button>
+        
         <AccessibleButton variant="ghost" className="desktop-only">Sign In</AccessibleButton>
         <AccessibleButton className="desktop-only">Post a Job</AccessibleButton>
         <button
@@ -267,6 +269,7 @@ function App() {
   const [isHighContrast, setIsHighContrast] = useState(() => {
     return localStorage.getItem('highContrast') === 'true';
   });
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   useEffect(() => {
     if (isHighContrast) {
@@ -278,6 +281,7 @@ function App() {
   }, [isHighContrast]);
 
   const toggleHighContrast = () => setIsHighContrast(!isHighContrast);
+  const openChat = () => setIsChatOpen(true);
 
   return (
     <BrowserRouter>
@@ -285,13 +289,16 @@ function App() {
       <a href="#main-content" className="skip-link">Skip to main content</a>
 
       <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-        <Header isHighContrast={isHighContrast} toggleHighContrast={toggleHighContrast} />
+        <Header isHighContrast={isHighContrast} toggleHighContrast={toggleHighContrast} onOpenChat={openChat} />
 
         <main id="main-content" style={{ flex: 1 }}>
           <AnimatedRoutes />
         </main>
 
         <Footer />
+        
+        {/* Accessible Chatbot - Asha */}
+        <AccessibleChatbot isOpen={isChatOpen} onOpenChange={setIsChatOpen} />
       </div>
     </BrowserRouter>
   );

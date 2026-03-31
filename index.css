@@ -476,3 +476,57 @@ input[role="switch"]:checked::after {
 }
 
 html[dir="rtl"] {}
+
+/* Chatbot Styles */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Chatbot high contrast support */
+body.high-contrast .glass {
+  background: #000 !important;
+  border: 2px solid #FFFF00 !important;
+}
+
+/* Ensure chatbot is keyboard accessible */
+.chatbot-message:focus-within {
+  outline: 2px solid var(--accent-purple);
+  outline-offset: 2px;
+}
+
+/* Smooth scrollbar for chat */
+[role="log"] {
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent-purple) transparent;
+}
+
+[role="log"]::-webkit-scrollbar {
+  width: 6px;
+}
+
+[role="log"]::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+[role="log"]::-webkit-scrollbar-thumb {
+  background: var(--accent-purple);
+  border-radius: 3px;
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
