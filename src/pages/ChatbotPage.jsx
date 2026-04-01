@@ -316,7 +316,7 @@ const ChatbotPage = () => {
               margin: '0 auto 16px'
             }}
           >
-            <Sparkles size={40} />
+            <Bot size={40} />
           </motion.div>
           <h2 style={{ margin: '0 0 8px', fontSize: '1.5rem' }}>Asha</h2>
           <p style={{ margin: 0, opacity: 0.9, fontSize: '0.9rem' }}>Your Accessibility Assistant</p>
