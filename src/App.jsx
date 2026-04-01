@@ -12,6 +12,7 @@ import AuthPage from './pages/AuthPage';
 import ScreenReader from './ScreenReader';
 import MotorAccessibilityToolbar from './MotorAccessibilityToolbar';
 import KeyboardShortcutsHelp from './KeyboardShortcutsHelp';
+import VoiceControl from './VoiceControl';
 import { useAuth } from './context/AuthContext';
 import faviconImg from './public/favicon.png';
 import './App.css';
@@ -651,6 +652,9 @@ const AppLayout = () => {
 
       {/* Screen Reader - Text-to-Speech Feature */}
       <ScreenReader />
+      
+      {/* Voice Control - Hands-free Navigation */}
+      <VoiceControl />
       
       {/* Motor Accessibility Toolbar - Section 7 */}
       <MotorAccessibilityToolbar />
