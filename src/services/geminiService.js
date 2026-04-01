@@ -2,14 +2,23 @@
 const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
 
+// System instruction for better formatting
+const SYSTEM_INSTRUCTION = `You are a helpful, friendly AI assistant. Format your responses to be clear and organized:
+- Use emojis sparingly to make responses friendly 😊
+- Use bullet points (•) for lists
+- Use line breaks to separate sections
+- Keep responses concise but informative
+- Be conversational and warm
+- When explaining technical topics, break them into simple points
+- DO NOT use markdown formatting like **bold** or *italic* - just use plain text
+- DO NOT use # for headings - just use plain text with emojis if needed`;
+
 /**
  * Send a message to Gemini AI and get a response
  * @param {string} userMessage - The user's message
  * @returns {Promise<string>} AI response text
  */
 export const getGeminiResponse = async (userMessage) => {
-  console.log('Gemini API Key exists:', !!GEMINI_API_KEY);
-  
   if (!GEMINI_API_KEY) {
     console.warn('Gemini API key not configured');
     return null;
@@ -22,6 +31,9 @@ export const getGeminiResponse = async (userMessage) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
+        systemInstruction: {
+          parts: [{ text: SYSTEM_INSTRUCTION }]
+        },
         contents: [
           {
             role: 'user',
@@ -29,17 +41,15 @@ export const getGeminiResponse = async (userMessage) => {
           }
         ],
         generationConfig: {
-          temperature: 0.9,
+          temperature: 0.8,
           topK: 40,
           topP: 0.95,
-          maxOutputTokens: 2048,
+          maxOutputTokens: 1024,
         }
       })
     });
 
     const data = await response.json();
-    console.log('Gemini response status:', response.status);
-    console.log('Gemini data:', data);
 
     if (!response.ok) {
       if (response.status === 429 || data.error?.status === 'RESOURCE_EXHAUSTED') {
@@ -57,7 +67,6 @@ export const getGeminiResponse = async (userMessage) => {
       return null;
     }
 
-    console.log('Gemini response text:', responseText);
     return responseText;
   } catch (error) {
     console.error('Error calling Gemini API:', error);
@@ -70,7 +79,5 @@ export const getGeminiResponse = async (userMessage) => {
  * @returns {boolean}
  */
 export const isGeminiConfigured = () => {
-  const configured = !!GEMINI_API_KEY;
-  console.log('isGeminiConfigured:', configured);
-  return configured;
+  return !!GEMINI_API_KEY;
 };
